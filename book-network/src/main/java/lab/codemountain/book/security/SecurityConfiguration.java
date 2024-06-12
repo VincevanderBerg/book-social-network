@@ -24,11 +24,12 @@ public class SecurityConfiguration {
     private final JwtFilter jwtAuthenticationFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request ->
-                        request.requestMatchers(
+        http /* Configure SecurityFilterChain: A series of tests that every request to the app must pass through.
+                Below methods are used to configure various aspects (cors, csrf, auth) of the filter chain.*/
+                .cors(withDefaults()) // Allows requests from other origins to access app resources; Here allows all origins without restrictions.
+                .csrf(AbstractHttpConfigurer::disable) // Disables CSRF (Cross-Site Request Forgery) protection.
+                .authorizeHttpRequests(request -> // Define accessible endpoints.
+                        request.requestMatchers( // Permitted endpoints.
                                 "/auth/**",
                                 "/v2/api-docs",
                                 "/v3/api-docs",
@@ -40,12 +41,13 @@ public class SecurityConfiguration {
                                 "/swagger-ui/**",
                                 "/webjars/**",
                                 "/swagger-ui.html"
-                        ).permitAll()
+                        ).permitAll() // Any other request is required to be authenticated.
                                 .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authencationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                // Configure session management
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS)) // Configure to not create and store sessions for users.
+                .authenticationProvider(authenticationProvider) // Configure authentication provider with custom implementation to handle authentication of user credentials.
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add filter before UsernamePasswordAuthenticationFilter to handle JWT tokens.
 
         return http.build();
     }
