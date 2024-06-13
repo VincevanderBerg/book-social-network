@@ -51,7 +51,7 @@ public class JwtService {
     }
 
     // Generate a new JWT token with additional claims for the given user details
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 

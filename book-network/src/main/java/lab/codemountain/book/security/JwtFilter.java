@@ -65,6 +65,9 @@ public class JwtFilter extends OncePerRequestFilter { // Ensures that the filter
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
+        logger.debug("Request URL: %s, Auth Header: %s".formatted(request.getRequestURI(), authHeader));
+        logger.debug("Security Context Authentication: %s".formatted(SecurityContextHolder.getContext().getAuthentication()));
         filterChain.doFilter(request, response);
     }
 }

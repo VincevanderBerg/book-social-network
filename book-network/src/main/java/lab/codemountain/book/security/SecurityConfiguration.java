@@ -1,6 +1,8 @@
 package lab.codemountain.book.security;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,6 +21,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
+    
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtFilter jwtAuthenticationFilter;
