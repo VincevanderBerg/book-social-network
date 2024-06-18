@@ -1,9 +1,6 @@
 package lab.codemountain.book.book;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lab.codemountain.book.common.BaseEntity;
 import lab.codemountain.book.feedback.Feedback;
 import lab.codemountain.book.history.BookTransactionHistory;
@@ -41,4 +38,18 @@ public class Book extends BaseEntity {
 
     @OneToMany(mappedBy = "book")
     private List<BookTransactionHistory> transactionHistories;
+
+    @Transient
+    public double getRating() {
+        if (this.feedbacks == null || this.feedbacks.isEmpty()) {
+            return 0.0;
+        }
+
+        double rating = this.feedbacks.stream()
+                .mapToDouble(Feedback::getRating)
+                .average()
+                .orElse(0.0);
+
+        return Math.round(rating * 10.0) / 10.0;
+    }
 }
