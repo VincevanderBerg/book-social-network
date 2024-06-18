@@ -1,10 +1,11 @@
-package lab.codemountain.book.feedback;
+package lab.codemountain.book.history;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lab.codemountain.book.book.Book;
 import lab.codemountain.book.common.BaseEntity;
+import lab.codemountain.book.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,12 +18,16 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-public class Feedback extends BaseEntity {
+public class BookTransactionHistory extends BaseEntity {
 
-    private Double rating;
-    private String comment;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
+
+    private boolean returned;
+    private boolean returnApproved;
 }

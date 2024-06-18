@@ -1,6 +1,8 @@
 package lab.codemountain.book.user;
 
 import jakarta.persistence.*;
+import lab.codemountain.book.book.Book;
+import lab.codemountain.book.history.BookTransactionHistory;
 import lab.codemountain.book.role.Role;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -41,6 +43,12 @@ public class User implements UserDetails, Principal {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Book> books;
+
+    @OneToMany(mappedBy = "user")
+    private List<BookTransactionHistory> transactionHistories;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
