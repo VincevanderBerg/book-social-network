@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -121,5 +122,20 @@ public class BookService {
                 allBorrowedBooks.isFirst(),
                 allBorrowedBooks.isLast()
         );
+    }
+
+    public Long updateShareableStatus(Long bookId, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("No book found with ID: " + bookId));
+
+        User user = (User) connectedUser.getPrincipal();
+        if (!user.equals(book.getOwner())) {
+            throw new AccessDeniedException("Only owner can update shareable status");
+        }
+
+        book.setShareable(!book.isShareable());
+        bookRepository.save(book);
+
+        return bookId;
     }
 }
