@@ -23,7 +23,7 @@ import static lab.codemountain.book.book.BookSpecification.*;
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final BookTransactionHistoryRepository bookTransactionHistoryRepository;
+    private final BookTransactionHistoryRepository bookHistoryRepository;
     private final BookMapper bookMapper;
 
     public Long saveBook(BookRequest request, Authentication connectedUser) {
@@ -84,8 +84,29 @@ public class BookService {
     public PageResponse<BorrowedBookResponse> findAllBorrowedBooks(int page, int size, Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<BookTransactionHistory> allBorrowedBooks = bookTransactionHistoryRepository
+        Page<BookTransactionHistory> allBorrowedBooks = bookHistoryRepository
                 .findAllBorrowedBooks(pageable, user.getId());
+
+        List<BorrowedBookResponse> borrowedBookResponses = allBorrowedBooks.stream()
+                .map(bookMapper::toBorrowedBookResponse)
+                .toList();
+
+        return new PageResponse<>(
+                borrowedBookResponses,
+                allBorrowedBooks.getNumber(),
+                allBorrowedBooks.getSize(),
+                allBorrowedBooks.getTotalElements(),
+                allBorrowedBooks.getTotalPages(),
+                allBorrowedBooks.isFirst(),
+                allBorrowedBooks.isLast()
+        );
+    }
+
+    public PageResponse<BorrowedBookResponse> findAllReturnedBooks(int page, int size, Authentication connectedUser) {
+        User user = (User) connectedUser.getPrincipal();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Page<BookTransactionHistory> allBorrowedBooks = bookHistoryRepository
+                .findAllReturnedBooks(pageable, user.getId());
 
         List<BorrowedBookResponse> borrowedBookResponses = allBorrowedBooks.stream()
                 .map(bookMapper::toBorrowedBookResponse)
