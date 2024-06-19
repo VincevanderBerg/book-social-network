@@ -1,5 +1,6 @@
 package lab.codemountain.book.book;
 
+import lab.codemountain.book.history.BookTransactionHistory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,5 +30,17 @@ public class BookMapper {
                 .archived(book.isArchived())
                 .shareable(book.isShareable())
                 .build();
+    }
+
+    public BorrowedBookResponse toBorrowedBookResponse(BookTransactionHistory history) {
+       return BorrowedBookResponse.builder()
+               .id(history.getId())
+               .title(history.getBook().getTitle())
+               .authorName(history.getBook().getAuthorName())
+               .isbn(history.getBook().getIsbn())
+               .rating(history.getBook().getRating())
+               .returned(history.isReturned())
+               .returnApproved(history.isReturnApproved())
+               .build();
     }
 }
